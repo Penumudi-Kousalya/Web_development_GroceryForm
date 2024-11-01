@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List</title>
+    <style>
+        body {
+    background-color: #f0fff0; /* Very light green background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+.glass {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    width: 80%;
+    height: 70vh;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid #00FF00; /* Highlight the form with a radiant green border */
+    overflow-y: auto;
+}
+.category, .subcategory, .quantity, .price {
+    margin-bottom: 15px;
+}
+.subcategory {
+    display: none;
+}
+select[multiple] {
+    height: auto;
+}
+.list {
+    margin-top: 20px;
+}
+input[type="number"], select {
+    width: 100%; /* Make input boxes larger */
+    padding: 10px;
+    box-sizing: border-box;
+}
+.selected-items {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+button {
+    color: white;
+    width: 100%; /* Make the button larger */
+    padding: 15px; /* Increase padding for a bigger button */
+    font-size: 16px; /* Increase font size */
+    background-color:black; /* Button background color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #00cc00; /* Darker green on hover */
+}
+
+    </style>
+</head>
+<body>
+    <div class="glass">
+        <h1>Grocery List</h1>
+        <form id="groceryForm">
+            <div class="category">
+                <label for="category">Category:</label>
+                <select id="category" name="category" onchange="document.querySelectorAll('.subcategory').forEach(el => el.style.display = 'none'); document.getElementById(this.value).style.display = 'block';">
+                    <option value="">Select a category</option>
+                    <option value="vegetables">Vegetables</option>
+                    <option value="fruits">Fruits</option>
+                    <option value="grocery">Grocery Items</option>
+                </select>
+            </div>
+            <div class="subcategory" id="vegetables">
+                <label for="vegetable">Vegetables:</label>
+                <select id="vegetable" name="vegetable" multiple>
+                    <option value="carrot">Carrot</option>
+                    <option value="potato">Potato</option>
+                    <option value="tomato">Tomato</option>
+                    <option value="broccoli">Broccoli</option>
+                    <option value="spinach">Spinach</option>
+                    <option value="onion">Onion</option>
+                    <option value="pepper">Pepper</option>
+                    <option value="cucumber">Cucumber</option>
+                    <option value="lettuce">Lettuce</option>
+                    <option value="cabbage">Cabbage</option>
+                </select>
+            </div>
+            <div class="subcategory" id="fruits">
+                <label for="fruit">Fruits:</label>
+                <select id="fruit" name="fruit" multiple>
+                    <option value="apple">Apple</option>
+                    <option value="banana">Banana</option>
+                    <option value="orange">Orange</option>
+                    <option value="grape">Grape</option>
+                    <option value="mango">Mango</option>
+                    <option value="strawberry">Strawberry</option>
+                    <option value="pineapple">Pineapple</option>
+                    <option value="watermelon">Watermelon</option>
+                    <option value="blueberry">Blueberry</option>
+                    <option value="kiwi">Kiwi</option>
+                </select>
+            </div>
+            <div class="subcategory" id="grocery">
+                <label for="groceryItem">Grocery Items:</label>
+                <select id="groceryItem" name="groceryItem" multiple>
+                    <option value="rice">Rice</option>
+                    <option value="flour">Flour</option>
+                    <option value="sugar">Sugar</option>
+                    <option value="salt">Salt</option>
+                    <option value="oil">Oil</option>
+                    <option value="pasta">Pasta</option>
+                    <option value="beans">Beans</option>
+                    <option value="lentils">Lentils</option>
+                    <option value="spices">Spices</option>
+                    <option value="tea">Tea</option>
+                    <option value="coffee">Coffee</option>
+                </select>
+            </div>
+            <div class="quantity">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" min="1">
+            </div>
+            <div class="price">
+                <label for="price">Price (INR):</label>
+                <input type="number" id="price" name="price" step="0.01" min="1">
+            </div>
+            <button type="button" onclick="addToList()">Add to List</button>
+        </form>
+        <div class="list">
+            <h2>Selected Items</h2>
+            <div class="selected-items" id="selectedItems"></div>
+            <h3>Total Price: ₹<span id="totalPrice">0</span></h3>
+        </div>
+    </div>
+    <script>
+        function addToList() {
+            const category = document.getElementById('category').value;
+            const subcategory = document.getElementById(category);
+            const selectedItems = Array.from(subcategory.querySelectorAll('option:checked')).map(el => el.value);
+            const quantity = document.getElementById('quantity').value;
+            const price = document.getElementById('price').value;
+            const selectedItemsBox = document.getElementById('selectedItems');
+            const totalPriceElement = document.getElementById('totalPrice');
+            let totalPrice = parseFloat(totalPriceElement.textContent);
+
+            selectedItems.forEach(item => {
+                const itemText = document.createElement('p');
+                itemText.textContent = `${item} - Quantity: ${quantity}, Price: ₹${price}`;
+                selectedItemsBox.appendChild(itemText);
+                totalPrice += parseFloat(price);
+            });
+
+            totalPriceElement.textContent = totalPrice.toFixed(2);
+
+            // Clear the form fields
+            document.getElementById('groceryForm').reset();
+            document.querySelectorAll('.subcategory').forEach(el => el.style.display = 'none');
+        }
+    </script>
+</body>
+</html>
